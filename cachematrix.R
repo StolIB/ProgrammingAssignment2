@@ -1,26 +1,33 @@
-## Put comments here that give an overall description of what your
-## functions do
-
-## Create object inverse matrix
+## Create object for inverse matrix
 makeCacheMatrix <- function(x = matrix()) {
-matrix <- NULL              
-set <- function(y) {					#write matrix	
-x <<- y
-matrix <<- NULL
-}
-get <- function() x					#read matrix
-setsolve <- function(solve) matrix <<- solve		#write inverse
-getsolve <- function() matrix				#read inverse
-list(set = set, get = get, setsolve = setsolve, getsolve = getsolve)
+	matrix <- NULL     
+	nochange <- F         
+	set <- function(y) {					#write matrix	
+		x <<- y
+		matrix <<- NULL
+		nochange <<- F
+	}
+	get <- function() x					#read matrix
+	setsolve <- function(solve) { 				#write inverse
+		matrix <<- solve
+		nochange <<- T
+	}		
+	getsolve <- function() matrix				#read inverse
+	getchange <- function() nochange			#read change
+	matequal <- function(y) 				#compare matrix
+        	is.matrix(x) && is.matrix(y) && dim(x) == dim(y) && all(x == y)
+ 	list(set = set, get = get, setsolve = setsolve, getsolve = getsolve)
 }
 
-## Return a matrix that is the inverse of 'x'
+## If the inverse has already been calculated (and the matrix has not changed), 
+## then the cacheSolve should retrieve the inverse from the cache.
 cacheSolve <- function(x, ...) {
-matrix <- x$getsolve()
-if(!is.null(matrix)) {                          
-return(matrix)						#return cache inverse
+	matrix <- x$getsolve()
+	if(!is.null(matrix) && x$getchange) {                          
+		return(matrix)					#return cache inverse
+	}
+	data <- x$get()
+	maxtrix <- solve(data)					#calculate inverse
+	x$setsolve(matrix)					#save inverse
+	matrix
 }
-data <- x$get()
-maxtrix <- solve(data)					#calculate inverse
-x$setsolve(matrix)					#save inverse
-matrix}
