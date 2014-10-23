@@ -3,9 +3,11 @@ makeCacheMatrix <- function(x = matrix()) {
 	matrix <- NULL     
 	nochange <- F         
 	set <- function(y) {					#write matrix	
-		x <<- y
-		matrix <<- NULL
-		nochange <<- F
+		if (!mateval(y)) {
+			x <<- y
+			matrix <<- NULL
+			nochange <<- F
+		}
 	}
 	get <- function() x					#read matrix
 	setsolve <- function(solve) { 				#write inverse
